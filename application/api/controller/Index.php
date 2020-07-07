@@ -10,7 +10,6 @@ class Index extends Base
 {
     public function index()
     {
-
         Common::res(['data' => [
             [
                 "id" => '2020060301',

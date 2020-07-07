@@ -17,9 +17,9 @@ return [
     // 数据库名
     'database'        => 'card',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'card',
     // 密码
-    'password'        => 'root',
+    'password'        => 'yahAHHsbFxjRJXrW',
     // 端口
     'hostport'        => '',
     // 连接dsn
