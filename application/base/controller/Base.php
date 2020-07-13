@@ -34,15 +34,15 @@ class Base extends Controller
     }
 
     /**
-     * 获取并校验请求参数
+     * 获取请求参数
      */
-    protected function req($field, $validate = '', $default = null)
+    protected function req($field, $default = null)
     {
         $params = json_decode(file_get_contents('php://input'), true);
-        $value = $params[$field];
-        // $value = input($field, $default);
-        if ($validate && !Validate::checkRule($value, $validate)) {
-            Common::res(['code' => 100, 'msg' => '参数错误！' . $field . '，错误值：' . $value]);
+        if (isset($params[$field])) {
+            $value = $params[$field];
+        } else {
+            $value = $default;
         }
 
         return $value;

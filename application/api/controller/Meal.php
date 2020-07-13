@@ -2,7 +2,6 @@
 
 namespace app\api\controller;
 
-use app\api\model\Card as ModelCard;
 use app\api\model\Meal as ModelMeal;
 use app\base\controller\Base;
 use app\base\service\Common;

@@ -14,7 +14,9 @@ class User extends Base
         $password = $this->req('password');
         $uid = ModelUser::where('username', $username)->where('password', $password)->value('id');
         if (!$uid) Common::res(['code' => 1, 'msg' => '用户名或密码错误']);
+        // 生成token
         $token = Common::setSession($uid);
+        // 设置最后登录时间
         ModelUser::where('id', $uid)->update(['least_login' => date('Y-m-d H:i:s')]);
         Common::res(['data' => [
             'token' => $token,
@@ -47,9 +49,7 @@ class User extends Base
     public function save()
     {
         $form = $this->req('form');
-
         ModelUser::create($form);
-
         Common::res();
     }
 }
