@@ -137,6 +137,18 @@ return [
             ['id' => 2, 'value' => '代理商管理员', 'roleCode' => 'admin_agent'],
         ],
 
+        // 是否上架
+        'is_added' => [
+            ['id' => 1, 'value' => '是'],
+            ['id' => 2, 'value' => '否'],
+        ],
+
+         // 是否推荐
+         'recommend' => [
+            ['id' => 1, 'value' => '是'],
+            ['id' => 2, 'value' => '否'],
+        ],
+
     ]
 
 ];
