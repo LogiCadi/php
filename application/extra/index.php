@@ -52,13 +52,20 @@ return [
             ['id' => 3, 'value' => 'API-CUCC-GDSGKZYQ', 'region_operator_id' => 3],
             ['id' => 4, 'value' => 'API-CTCC-GDSGKZYQ', 'region_operator_id' => 4],
         ],
+        // 运营商状态
+        'region_operator_status' => [
+            ['id' => 1, 'value' => 'API-CMCC-GDSGKZYQ'],
+            ['id' => 2, 'value' => 'API-CMCC-GDGZKZYQ'],
+            ['id' => 3, 'value' => 'API-CUCC-GDSGKZYQ'],
+            ['id' => 4, 'value' => 'API-CTCC-GDSGKZYQ'],
+        ],
         // 卡类型：现在只放11位非定向语音卡（后面可能会加放11位定向语音）
         'card_type' => [
             ['id' => 1, 'value' => '11位定向语音卡'],
             ['id' => 2, 'value' => '11位非定向语音卡'],
         ],
         // 应用场景：智能穿戴4G儿童手表/智能穿戴2G儿童手表（2个选项）
-        'use_scence' => [
+        'use_scene' => [
             ['id' => 1, 'value' => '智能穿戴4G儿童手表'],
             ['id' => 2, 'value' => '智能穿戴2G儿童手表'],
         ],
