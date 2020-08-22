@@ -52,13 +52,20 @@ return [
             ['id' => 3, 'value' => 'API-CUCC-GDSGKZYQ', 'region_operator_id' => 3],
             ['id' => 4, 'value' => 'API-CTCC-GDSGKZYQ', 'region_operator_id' => 4],
         ],
+        // 运营商状态
+        'region_operator_status' => [
+            ['id' => 1, 'value' => 'API-CMCC-GDSGKZYQ'],
+            ['id' => 2, 'value' => 'API-CMCC-GDGZKZYQ'],
+            ['id' => 3, 'value' => 'API-CUCC-GDSGKZYQ'],
+            ['id' => 4, 'value' => 'API-CTCC-GDSGKZYQ'],
+        ],
         // 卡类型：现在只放11位非定向语音卡（后面可能会加放11位定向语音）
         'card_type' => [
             ['id' => 1, 'value' => '11位定向语音卡'],
             ['id' => 2, 'value' => '11位非定向语音卡'],
         ],
         // 应用场景：智能穿戴4G儿童手表/智能穿戴2G儿童手表（2个选项）
-        'use_scence' => [
+        'use_scene' => [
             ['id' => 1, 'value' => '智能穿戴4G儿童手表'],
             ['id' => 2, 'value' => '智能穿戴2G儿童手表'],
         ],
@@ -75,6 +82,79 @@ return [
         // 卡批次：就是指本次要录的多少个号码为1整批出货给客户的批次号记录（看看能不能搞成自动生成批次号，比如今天出了2个批次，0001、0002，明天会自动变成0003，不需要人为输入批次号）
 
         // CSV文件：就是出货的对应卡号和ICCID号
+
+        // 套餐类型
+        'meal_type' => [
+            ['id' => 1, 'value' => '年包'],
+            ['id' => 2, 'value' => '半年包'],
+            ['id' => 3, 'value' => '季包'],
+            ['id' => 4, 'value' => '月包'],
+            ['id' => 5, 'value' => '体验包'],
+        ],
+
+        // 结算类型
+        'settle_type' => [
+            ['id' => 1, 'value' => '月结'],
+            ['id' => 2, 'value' => '按套餐周期结算'],
+        ],
+
+        // 购买限制
+        'buy_limit' => [
+            ['id' => 1, 'value' => '不限制'],
+            ['id' => 2, 'value' => '只能购买一次'],
+        ],
+
+        // 代理商类型
+        'agent_type' => [
+            ['id' => 1, 'value' => '行业客户'],
+            ['id' => 2, 'value' => '渠道客户'],
+            ['id' => 3, 'value' => '自建渠道'],
+            ['id' => 4, 'value' => '花卡代理商'],
+        ],
+
+        // 代理商级别
+        'agent_level' => [
+            ['id' => 1, 'value' => 'A（每周二可提现）'],
+            ['id' => 2, 'value' => 'B（每月5/16/17号可提现）'],
+            ['id' => 3, 'value' => 'C（每周3/4/5号可提现）'],
+            ['id' => 4, 'value' => 'D（每日可提现）'],
+        ],
+
+        // 实时分润
+        'shareprofit' => [
+            ['id' => 1, 'value' => '否'],
+            ['id' => 2, 'value' => '实时订单29%分润'],
+            ['id' => 3, 'value' => '实时余额分润'],
+        ],
+
+        // 结算对象（不可修改）
+        'settle_target' => [
+            ['id' => 1, 'value' => '上级代理商'],
+        ],
+
+        // 性别
+        'gender' => [
+            ['id' => 1, 'value' => '男'],
+            ['id' => 2, 'value' => '女'],
+        ],
+
+        // 角色
+        'role' => [
+            ['id' => 1, 'value' => '超级管理员', 'roleCode' => 'admin'],
+            ['id' => 2, 'value' => '代理商管理员', 'roleCode' => 'admin_agent'],
+        ],
+
+        // 是否上架
+        'is_added' => [
+            ['id' => 1, 'value' => '是'],
+            ['id' => 2, 'value' => '否'],
+        ],
+
+         // 是否推荐
+         'recommend' => [
+            ['id' => 1, 'value' => '是'],
+            ['id' => 2, 'value' => '否'],
+        ],
 
     ]
 

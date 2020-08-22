@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\api\model\Card as ModelCard;
+use app\api\model\User;
 use app\base\controller\Base;
 use app\base\service\Common;
 
@@ -21,14 +22,18 @@ class Card extends Base
 
     public function cardInput()
     {
+        $this->getUser();
+
         $cardForm = $this->req('form');
         // 获取csv数组
         $csvList = ModelCard::getCSV($cardForm['csv']);
         // 去除csv文件
         unset($cardForm['csv']);
         // 生成卡批次
-        $cardForm['batch'] = ModelCard::getNewBatch();
-        
+        $cardForm['batch'] = ModelCard::getNewBatch(); 
+        // 获取当前用户所属代理商
+        $cardForm['agent'] = User::where('id', $this->uid)->value('agent');
+
         foreach ($csvList as $row) {
             $dataList[] = array_merge($cardForm, [
                 'business_code' => $row[0],
