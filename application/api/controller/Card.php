@@ -30,9 +30,7 @@ class Card extends Base
         // 去除csv文件
         unset($cardForm['csv']);
         // 生成卡批次
-        $cardForm['batch'] = ModelCard::getNewBatch(); 
-        // 获取当前用户所属代理商
-        $cardForm['agent'] = User::where('id', $this->uid)->value('agent');
+        $cardForm['batch'] = ModelCard::getNewBatch();
 
         foreach ($csvList as $row) {
             $dataList[] = array_merge($cardForm, [
@@ -45,10 +43,29 @@ class Card extends Base
 
         try {
             (new ModelCard)->saveAll($dataList);
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             Common::res(['code' => 1, 'msg' => $th->getMessage()]);
         }
 
         Common::res();
+    }
+
+    /** 卡片数 */
+    public function cardCount()
+    {
+        $form = $this->req('form');
+        $ids = ModelCard::getIDs($form, 'business_code');
+        Common::res(['data' => count($ids)]);
+    }
+
+    /** 卡片划拨 */
+    public function cardAssign()
+    {
+        $form = $this->req('form');
+        // 根据业务号段获取卡id的数组
+        $ids = ModelCard::getIDs($form, 'business_code');
+        if (!isset($form['to_agent'])) Common::res(['code' => 1, 'msg' => '请选择划拨目标']);
+        ModelCard::where('id', 'in', $ids)->update(['agent' => $form['to_agent']]);
+        Common::res(['data' => $ids]);
     }
 }

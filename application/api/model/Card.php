@@ -3,6 +3,7 @@
 
 namespace app\api\model;
 
+use app\base\service\Common;
 use think\Model;
 
 class Card extends Model
@@ -31,5 +32,28 @@ class Card extends Model
             $newBatchNum = str_pad($batchNum + 1, 4, "0", STR_PAD_LEFT);
             return date('Ymd') . '-' . $newBatchNum;
         }
+    }
+
+    /** 
+     * 获取卡ID集合
+     */
+    public static function getIDs($query, $mode = 'business_code')
+    {
+        switch ($mode) {
+            case 'business_code':
+                if (isset($query['business_code_start']) && isset($query['business_code_end'])) {
+                    $ids = self::where('business_code', 'between', [$query['business_code_start'], $query['business_code_end']])
+                        ->column('id');
+                } else {
+                    Common::res(['code' => 1, 'msg' => '请输入查询条件']);
+                }
+                break;
+
+            default:
+                # code...
+                break;
+        }
+
+        return $ids;
     }
 }

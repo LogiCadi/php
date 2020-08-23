@@ -13,7 +13,8 @@ class Base extends Controller
     {
         parent::__construct();
 
-        header("Access-Control-Allow-Origin:*");
+        header('Access-Control-Allow-Origin:*');
+        header('Content-Type:application/json');
 
         $version = input('version');
     }

@@ -140,8 +140,8 @@ return [
 
         // 角色
         'role' => [
-            ['id' => 1, 'value' => '超级管理员', 'roleCode' => 'admin'],
-            ['id' => 2, 'value' => '代理商管理员', 'roleCode' => 'admin_agent'],
+            ['id' => 1, 'value' => '超级管理员', 'roleCode' => 'admin', 'type' => 'danger'],
+            ['id' => 2, 'value' => '代理商管理员', 'roleCode' => 'admin_agent', 'type' => 'success'],
         ],
 
         // 是否上架
@@ -150,10 +150,16 @@ return [
             ['id' => 2, 'value' => '否'],
         ],
 
-         // 是否推荐
-         'recommend' => [
+        // 是否推荐
+        'recommend' => [
             ['id' => 1, 'value' => '是'],
             ['id' => 2, 'value' => '否'],
+        ],
+
+        // 卡片选择模式
+        'card_selected_mode' => [
+            ['id' => 1, 'value' => '根据业务号码选择'],
+            ['id' => 2, 'value' => '根据卡片批次选择'],
         ],
 
     ]
