@@ -65,7 +65,7 @@ class Card extends Base
         // 根据业务号段获取卡id的数组
         $ids = ModelCard::getIDs($form, 'business_code');
         if (!isset($form['to_agent'])) Common::res(['code' => 1, 'msg' => '请选择划拨目标']);
-        ModelCard::where('id', 'in', $ids)->update(['agent' => $form['to_agent']]);
+        ModelCard::where('id', 'in', $ids)->update(['agent' => $form['to_agent'], 'assign_status' => 1]);
         Common::res(['data' => $ids]);
     }
 }
