@@ -37,23 +37,19 @@ class Card extends Model
     /** 
      * 获取卡ID集合
      */
-    public static function getIDs($query, $mode = 'business_code')
+    public static function getIDs($query)
     {
-        switch ($mode) {
-            case 'business_code':
-                if (isset($query['business_code_start']) && isset($query['business_code_end'])) {
-                    $ids = self::where('business_code', 'between', [$query['business_code_start'], $query['business_code_end']])
-                        ->column('id');
-                } else {
-                    Common::res(['code' => 1, 'msg' => '请输入查询条件']);
-                }
-                break;
-
-            default:
-                # code...
-                break;
+        $select = self::where('1=1');
+        // 根据业务号码区段查询
+        if (isset($query['business_code_start']) && isset($query['business_code_end'])) {
+            $select = $select->where('business_code', 'between', [$query['business_code_start'], $query['business_code_end']]);
         }
 
-        return $ids;
+        // 根据所属代理商查询
+        if (isset($query['agent']) && $query['agent']) {
+            $select = $select->where('agent', $query['agent']);
+        }
+
+        return $select->column('id');
     }
 }

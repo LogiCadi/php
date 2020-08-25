@@ -54,7 +54,7 @@ class Card extends Base
     public function cardCount()
     {
         $form = $this->req('form');
-        $ids = ModelCard::getIDs($form, 'business_code');
+        $ids = ModelCard::getIDs($form);
         Common::res(['data' => count($ids)]);
     }
 
@@ -63,7 +63,7 @@ class Card extends Base
     {
         $form = $this->req('form');
         // 根据业务号段获取卡id的数组
-        $ids = ModelCard::getIDs($form, 'business_code');
+        $ids = ModelCard::getIDs($form);
         if (!isset($form['to_agent'])) Common::res(['code' => 1, 'msg' => '请选择划拨目标']);
         ModelCard::where('id', 'in', $ids)->update(['agent' => $form['to_agent'], 'assign_status' => 1]);
         Common::res(['data' => $ids]);
