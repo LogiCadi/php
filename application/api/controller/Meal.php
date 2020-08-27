@@ -12,9 +12,16 @@ class Meal extends Base
     {
         $page = $this->req('page');
         $size = $this->req('size');
+        $words = $this->req('words');
 
-        $res['list'] = ModelMeal::where('1=1')->order('create_time desc')->page($page, $size)->select();
-        $res['total'] = ModelMeal::where('1=1')->count();
+        $query = ModelMeal::where('1=1')->order('create_time desc');
+        // 分页查询
+        if ($page && $size) $query = $query->page($page, $size);
+        // name模糊查询
+        if ($words) $query = $query->where('name', 'like', '%' . $words . '%');
+        $res['list'] = $query->select();
+        // 总数据量
+        $res['total'] = $query->count();
 
         Common::res(['data' => $res]);
     }
