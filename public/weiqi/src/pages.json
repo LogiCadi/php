@@ -1,0 +1,24 @@
+{
+	"pages": [
+		{
+			"path": "pages/play/renji",
+			"style": {}
+		},
+		{
+			"path": "pages/play/renjigame",
+			"style": {}
+		}
+	],
+	
+	"sitemapLocation": "sitemap.json",
+	"deviceOrientation": "portrait",
+	"globalStyle": {
+		"navigationStyle":"custom",
+		"backgroundColor": "#eabe79",
+		"backgroundTextStyle": "light",
+		"navigationBarBackgroundColor": "#3c3c3c",
+		"navigationBarTitleText": "",
+		"navigationBarTextStyle": "white"
+	},
+	"subPackages": []
+}
