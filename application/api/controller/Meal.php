@@ -2,6 +2,8 @@
 
 namespace app\api\controller;
 
+use app\api\model\Card as ModelCard;
+use app\api\model\CardMeal;
 use app\api\model\Meal as ModelMeal;
 use app\base\controller\Base;
 use app\base\service\Common;
@@ -29,9 +31,24 @@ class Meal extends Base
     public function save()
     {
         $form = $this->req('form');
-
         ModelMeal::create($form);
-
         Common::res();
+    }
+
+    public function bind()
+    {
+        $form = $this->req('form');
+
+        $cardIds = ModelCard::getIDs($form);
+
+        $insert = [];
+        $meal_options = ['year', 'half_year', 'season', 'month'];
+        foreach ($cardIds as $id) {
+            foreach ($meal_options as $type) {
+                if (isset($form[$type])) $insert[] = ['card_id' => $id, 'meal_id' => $form[$type], 'time_type' => $type];
+            }
+        }
+        $res = (new CardMeal)->saveAll($insert);
+        Common::res(['data' => $res]);
     }
 }
