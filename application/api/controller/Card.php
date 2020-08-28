@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\api\model\Card as ModelCard;
+use app\api\model\CardMeal;
 use app\api\model\User;
 use app\base\controller\Base;
 use app\base\service\Common;
@@ -20,6 +21,7 @@ class Card extends Base
         Common::res(['data' => $res]);
     }
 
+    /** 新建卡片 */
     public function cardInput()
     {
         $this->getUser();
@@ -67,5 +69,15 @@ class Card extends Base
         if (!isset($form['to_agent'])) Common::res(['code' => 1, 'msg' => '请选择划拨目标']);
         ModelCard::where('id', 'in', $ids)->update(['agent' => $form['to_agent'], 'assign_status' => 1]);
         Common::res(['data' => $ids]);
+    }
+
+    /** 根据id获取卡片详情 */
+    public function getInfo()
+    {
+        $id = $this->req('id');
+        $res = ModelCard::where('id', $id)->find();
+
+        $res['meals'] = CardMeal::with('meal')->where('card_id', $id)->select();
+        Common::res(['data' => $res]);
     }
 }
