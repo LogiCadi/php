@@ -2,11 +2,14 @@
 
 namespace app\api\controller;
 
+use app\api\model\Agent;
 use app\api\model\Card as ModelCard;
 use app\api\model\CardMeal;
+use app\api\model\Meal;
 use app\api\model\User;
 use app\base\controller\Base;
 use app\base\service\Common;
+use think\Db;
 
 class Card extends Base
 {
@@ -79,5 +82,20 @@ class Card extends Base
 
         $res['meals'] = CardMeal::with('meal')->where('card_id', $id)->select();
         Common::res(['data' => $res]);
+    }
+
+    public function cardActive()
+    {
+        $card_id = $this->req('card_id');
+        $meal_id = $this->req('meal_id');
+
+        $meal = Meal::where('id', $meal_id)->find();
+        $card = ModelCard::where('id', $card_id)->find();
+
+        $earnCount = $meal['meal_price'] - $meal['meal_cost'];
+
+        ModelCard::where('id', $card_id)->update(['card_status' => 1, 'first_active_time' => date('Y-m-d H:i:s')]);
+        Agent::where('id', $card['agent'])->update(['shareprofit' => Db::raw('shareprofit+' . $earnCount)]);
+        Common::res();
     }
 }
