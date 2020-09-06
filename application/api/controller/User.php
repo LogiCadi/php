@@ -5,6 +5,7 @@ namespace app\api\controller;
 use app\base\controller\Base;
 use app\base\service\Common;
 use app\api\model\User as ModelUser;
+use app\api\model\Agent as ModelAgent;
 
 class User extends Base
 {
@@ -28,10 +29,12 @@ class User extends Base
         $this->getUser();
         $user = ModelUser::where('id', $this->uid)->find();
         $role = array_column(config('index')['enum']['role'], 'roleCode', 'id');
+        $agent = ModelAgent::where('id', $user['agent'])->find();
         Common::res(['data' => [
             'roles' => [$role[$user['role']]],
             'avatar' => $user['avatar'],
-            'name' => $user['realname']
+            'name' => $user['realname'],
+            'agent' => $agent
         ]]);
     }
 

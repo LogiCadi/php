@@ -13,6 +13,7 @@ use think\Db;
 
 class Card extends Base
 {
+    /** 卡列表 */
     public function cardList()
     {
         $page = $this->req('page');
@@ -78,7 +79,16 @@ class Card extends Base
     public function getInfo()
     {
         $id = $this->req('id');
-        $res = ModelCard::where('id', $id)->find();
+        $iccid = $this->req('iccid');
+        
+        $query = ModelCard::where('1=1');
+        if ($id) {
+            $query = $query->where('id', $id);
+        }
+        if ($iccid) {
+            $query = $query->where('iccid', $iccid);
+        }
+        $res = $query->find();
 
         $res['meals'] = CardMeal::with('meal')->where('card_id', $id)->select();
         Common::res(['data' => $res]);
