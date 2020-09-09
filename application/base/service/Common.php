@@ -147,6 +147,23 @@ class Common
         return $str;
     }
 
+    /**获取支付签名 */
+    public static function makeSign($params, $apikey)
+    {
+        ksort($params);
+        foreach ($params as $key => $item) {
+            if (!empty($item)) {
+                $newArr[] = $key . '=' . $item;
+            }
+        }
+        $stringA = implode("&", $newArr);
+        // key是在商户平台API安全里自己设置的
+        $stringSignTemp = $stringA . "&key=" . $apikey;
+        $stringSignTemp = MD5($stringSignTemp);
+        $sign = strtoupper($stringSignTemp);
+        return $sign;
+    }
+
     /**
      * 获取微信APP信息
      * @param string $w appid或type 默认miniapp

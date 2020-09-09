@@ -6,6 +6,7 @@ use app\base\controller\Base;
 use app\base\service\Common;
 use app\api\model\User as ModelUser;
 use app\api\model\Agent as ModelAgent;
+use think\Log;
 
 class User extends Base
 {
@@ -22,6 +23,19 @@ class User extends Base
         Common::res(['data' => [
             'token' => $token,
         ]]);
+    }
+
+    public function getOpenId()
+    {
+        $code = $this->req('code');
+
+        $appid = config('private')['gzh_appid'];
+        $secret = config('private')['gzh_secret'];
+
+        $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={$appid}&secret={$secret}&code={$code}&grant_type=authorization_code";
+        $res = Common::request($url);
+
+        Common::res(['data' => $res]);
     }
 
     public function info()
