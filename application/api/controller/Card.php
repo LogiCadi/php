@@ -9,6 +9,7 @@ use app\api\model\Meal;
 use app\api\model\User;
 use app\base\controller\Base;
 use app\base\service\Common;
+use app\index\model\User as ModelUser;
 use think\Db;
 
 class Card extends Base
@@ -44,6 +45,8 @@ class Card extends Base
                 'password' => $row[1],
                 'iccid' => $row[2],
                 'remarks' => $row[3],
+
+                'agent' => 1,
             ]);
         }
 
@@ -64,6 +67,27 @@ class Card extends Base
         Common::res(['data' => count($ids)]);
     }
 
+    public function getMeals()
+    {
+        $this->getUser();
+        $agent_id = ModelUser::where('id', $this->uid)->value('agent');
+        $form = $this->req('form');
+        // 卡划拨
+        $ids = ModelCard::getIDs($form);
+
+        $id = $ids[0];
+        if (!$id) Common::res(['code' => 1, 'msg' => '未找到批次']);
+
+        $isExist = ModelCard::where('id', $id)->where('agent', $agent_id)->find();
+        if (!$isExist) Common::res(['code' => 1, 'msg' => '该卡批次未划拨给你']);
+
+        $res = CardMeal::with('meal')->where('card_id', $id)->select();
+        Common::res(['data' => [
+            'meals' => $res,
+            'count' => count($ids),
+        ]]);
+    }
+
     /** 卡片划拨 */
     public function cardAssign()
     {
@@ -80,7 +104,7 @@ class Card extends Base
     {
         $id = $this->req('id');
         $iccid = $this->req('iccid');
-        
+
         $query = ModelCard::where('1=1');
         if ($id) {
             $query = $query->where('id', $id);
@@ -94,18 +118,18 @@ class Card extends Base
         Common::res(['data' => $res]);
     }
 
-    public function cardActive()
-    {
-        $card_id = $this->req('card_id');
-        $meal_id = $this->req('meal_id');
+    // public function cardActive()
+    // {
+    //     $card_id = $this->req('card_id');
+    //     $meal_id = $this->req('meal_id');
 
-        $meal = Meal::where('id', $meal_id)->find();
-        $card = ModelCard::where('id', $card_id)->find();
+    //     $meal = Meal::where('id', $meal_id)->find();
+    //     $card = ModelCard::where('id', $card_id)->find();
 
-        $earnCount = $meal['meal_price'] - $meal['meal_cost'];
+    //     $earnCount = $meal['meal_price'] - $meal['meal_cost'];
 
-        ModelCard::where('id', $card_id)->update(['card_status' => 1, 'first_active_time' => date('Y-m-d H:i:s')]);
-        Agent::where('id', $card['agent'])->update(['shareprofit' => Db::raw('shareprofit+' . $earnCount)]);
-        Common::res();
-    }
+    //     ModelCard::where('id', $card_id)->update(['card_status' => 1, 'first_active_time' => date('Y-m-d H:i:s')]);
+    //     Agent::where('id', $card['agent'])->update(['shareprofit' => Db::raw('shareprofit+' . $earnCount)]);
+    //     Common::res();
+    // }
 }

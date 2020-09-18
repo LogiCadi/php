@@ -2,9 +2,13 @@
 
 namespace app\api\controller;
 
+use app\api\model\Agent;
+use app\api\model\Card;
+use app\api\model\Meal;
 use app\api\model\Order;
 use app\base\controller\Base;
 use app\base\service\Common;
+use think\Db;
 use think\Log;
 
 class Payment extends Base
@@ -22,6 +26,11 @@ class Payment extends Base
         Order::create([
             'id' => $orderId,
             'total_fee' => $totalFee,
+            'info' => json_encode([
+                'card_id' => $card_id,
+                'meal_id' => $meal_id
+            ]),
+            'create_time' => date('Y-m-d H:i:s')
         ]);
 
         $url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
@@ -75,7 +84,6 @@ class Payment extends Base
         $xmlData = file_get_contents('php://input');
         $data = Common::fromXml($xmlData);
         if ($data['result_code'] != 'SUCCESS') return;
-        Log::record(json_encode($data), 'error');
 
         $sign = $data['sign'];
         unset($data['sign']); // 剔除sign再校验
@@ -83,6 +91,10 @@ class Payment extends Base
         if ($sign != Common::makeSign($data, $apikey)) return;
 
         Order::where('id', $data['out_trade_no'])->update(['pay_time' => $data['time_end']]);
+
+        $orderInfo = json_decode(Order::where('id', $data['out_trade_no'])->value('info'), true);
+        Agent::increase_shareprofit($orderInfo);
+        
         die('<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>');
     }
 }

@@ -45,6 +45,10 @@ class Card extends Model
             $select = $select->where('business_code', 'between', [$query['business_code_start'], $query['business_code_end']]);
         }
 
+        if (isset($query['batch'])) {
+            $select = $select->where('batch', $query['batch']);
+        }
+
         // 根据所属代理商查询
         if (isset($query['agent']) && $query['agent']) {
             $select = $select->where('agent', $query['agent']);
