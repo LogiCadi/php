@@ -40,6 +40,7 @@ class Card extends Model
     public static function getIDs($query)
     {
         $select = self::where('1=1');
+        if (!isset($query['batch'])) Common::res(['code' => 1, 'msg' => '请填写卡批次']);
         // 根据业务号码区段查询
         if (isset($query['business_code_start']) && isset($query['business_code_end'])) {
             $select = $select->where('business_code', 'between', [$query['business_code_start'], $query['business_code_end']]);

@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 use app\base\controller\Base;
 use app\base\service\Common;
+use app\base\service\WxAPI;
 
 class Config extends Base
 {
@@ -24,7 +25,7 @@ class Config extends Base
                 // 成功上传
                 Common::res([
                     'data' => [
-                        'url' => 'http://' . $_SERVER['HTTP_HOST'] . '/uploads/' . $info->getSaveName()
+                        'url' => $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . '/uploads/' . $info->getSaveName()
                     ]
                 ]);
             } else {
@@ -35,5 +36,13 @@ class Config extends Base
                 ]);
             }
         }
+    }
+
+    /** 二维码/条码识别 */
+    public function qrcodeCV()
+    {
+        $imgUrl = $this->req('imgUrl');
+        $res = (new WxAPI)->qrcodeCV($imgUrl);
+        Common::res(['data' => $res['code_results']]);
     }
 }

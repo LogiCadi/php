@@ -22,7 +22,7 @@ class Payment extends Base
 
         // 生成订单
         $orderId = date('YmdHis') . mt_rand(1000, 9999);
-        $totalFee = 0.01;
+        $totalFee = Meal::where('id', $meal_id)->value('meal_price');
         Order::create([
             'id' => $orderId,
             'total_fee' => $totalFee,
@@ -93,8 +93,8 @@ class Payment extends Base
         Order::where('id', $data['out_trade_no'])->update(['pay_time' => $data['time_end']]);
 
         $orderInfo = json_decode(Order::where('id', $data['out_trade_no'])->value('info'), true);
-        Agent::increase_shareprofit($orderInfo);
-        
+        Agent::cardActive($orderInfo);
+
         die('<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>');
     }
 }
