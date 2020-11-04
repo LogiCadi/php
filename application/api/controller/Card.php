@@ -10,6 +10,7 @@ use app\api\model\MealAgentCost;
 use app\api\model\User;
 use app\base\controller\Base;
 use app\base\service\Common;
+use app\cmcc\service\Api;
 use app\index\model\User as ModelUser;
 use think\Db;
 
@@ -18,11 +19,33 @@ class Card extends Base
     /** 卡列表 */
     public function cardList()
     {
-        $page = $this->req('page');
-        $size = $this->req('size');
+        // 排序
+        $sortProp = $this->req('sortProp');
+        $sortOrder = $this->req('sortOrder');
+        $order = 'create_time desc';
+        if ($sortOrder) $order = $sortProp . ' ' . $sortOrder . ',' . $order;
 
-        $res['list'] = ModelCard::where('1=1')->order('create_time desc')->page($page, $size)->select();
-        $res['total'] = ModelCard::where('1=1')->count();
+        $query = ModelCard::where('1=1')->order($order);
+
+        // 过滤
+        $business_code = $this->req('business_code');
+        if ($business_code) {
+            $query = $query->where('business_code', $business_code);
+        }
+        $iccid = $this->req('iccid');
+        if ($iccid) {
+            $query = $query->where('iccid', $iccid);
+        }
+        $agent = $this->req('agent');
+        if ($agent) {
+            $query = $query->where('agent', $agent);
+        }
+
+        $page = $this->req('page');
+        $size = $this->req('size'); 
+        $res['list'] = $query->page($page, $size)->select();
+        // 总计
+        $res['total'] = $query->count();
 
         Common::res(['data' => $res]);
     }
@@ -76,11 +99,11 @@ class Card extends Base
         // 卡划拨
         $ids = ModelCard::getIDs($form);
 
+        if (!$ids) Common::res(['code' => 1, 'msg' => '未找到批次']);
         $id = $ids[0];
-        if (!$id) Common::res(['code' => 1, 'msg' => '未找到批次']);
 
         $isExist = ModelCard::where('id', $id)->where('agent', $agent_id)->find();
-        if (!$isExist) Common::res(['code' => 1, 'msg' => '该卡批次未划拨给你']);
+        if (!$isExist) Common::res(['code' => 1, 'msg' => '该卡批不属于你的代理商']);
 
         $res = CardMeal::with('meal')->where('card_id', $id)->select();
         Common::res(['data' => [
@@ -133,18 +156,11 @@ class Card extends Base
         Common::res(['data' => $res]);
     }
 
-    // public function cardActive()
-    // {
-    //     $card_id = $this->req('card_id');
-    //     $meal_id = $this->req('meal_id');
-
-    //     $meal = Meal::where('id', $meal_id)->find();
-    //     $card = ModelCard::where('id', $card_id)->find();
-
-    //     $earnCount = $meal['meal_price'] - $meal['meal_cost'];
-
-    //     ModelCard::where('id', $card_id)->update(['card_status' => 1, 'first_active_time' => date('Y-m-d H:i:s')]);
-    //     Agent::where('id', $card['agent'])->update(['shareprofit' => Db::raw('shareprofit+' . $earnCount)]);
-    //     Common::res();
-    // }
+    /** 开启实名权限 */
+    public function cardActive()
+    {
+        $business_code = $this->req('business_code');
+        (new Api)->realname($business_code, 1);
+        Common::res();
+    }
 }

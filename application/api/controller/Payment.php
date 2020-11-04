@@ -19,10 +19,12 @@ class Payment extends Base
         $openid = $this->req('openid');
         $card_id = $this->req('card_id');
         $meal_id = $this->req('meal_id');
+        $mobile = $this->req('mobile');
 
         // 生成订单
         $orderId = date('YmdHis') . mt_rand(1000, 9999);
         $totalFee = Meal::where('id', $meal_id)->value('meal_price');
+        // $totalFee = 0.01;
         Order::create([
             'id' => $orderId,
             'total_fee' => $totalFee,
@@ -30,6 +32,7 @@ class Payment extends Base
                 'card_id' => $card_id,
                 'meal_id' => $meal_id
             ]),
+            'mobile' => $mobile,
             'create_time' => date('Y-m-d H:i:s')
         ]);
 
@@ -90,11 +93,19 @@ class Payment extends Base
         $apikey = config('private')['apikey'];
         if ($sign != Common::makeSign($data, $apikey)) return;
 
-        Order::where('id', $data['out_trade_no'])->update(['pay_time' => $data['time_end']]);
+        Order::where('id', $data['out_trade_no'])->update(['wx_id' => $data['transaction_id'], 'pay_time' => $data['time_end']]);
 
         $orderInfo = json_decode(Order::where('id', $data['out_trade_no'])->value('info'), true);
         Agent::cardActive($orderInfo);
 
         die('<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>');
+    }
+
+    /** 退款 */
+    public function refund()
+    {
+        $url = 'https://api.mch.weixin.qq.com/secapi/pay/refund';
+
+        
     }
 }

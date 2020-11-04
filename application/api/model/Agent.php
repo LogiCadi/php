@@ -20,30 +20,34 @@ class Agent extends Model
         $card = Card::where('id', $orderInfo['card_id'])->find();
         $meal = Meal::where('id', $orderInfo['meal_id'])->find();
 
+        // 卡变成已激活
+        if ($card['card_status'] === 0) {
+            Card::where('id', $orderInfo['card_id'])->update(['card_status' => 1, 'first_active_time' => date('Y-m-d H:i:s')]);
+            // 开启允许实名权限（激活）
+            (new Api)->realname($card['business_code'], 1);
+        }
+
         // 分润层级
         $tier = json_decode(CardMeal::where('card_id', $orderInfo['card_id'])->where('meal_id', $orderInfo['meal_id'])->value('tier'), true);
-        // 按cost排序
-        foreach ($tier as $key => $value) {
-            $sort[$key] = $value['cost'];
+        if ($tier) {
+            // 按cost排序
+            foreach ($tier as $key => $value) {
+                $sort[$key] = $value['cost'];
+            }
+            array_multisort($tier, SORT_ASC, $sort);
+
+            $curPrice = $meal['meal_price'];
+            foreach ($tier as $key => $value) {
+                $cur = array_pop($tier);
+
+                $shareprofit = $curPrice - $cur['cost'];
+                if ($shareprofit < 0) $shareprofit = 0;
+                $agent = $cur['agent_id'];
+
+                Agent::where('id', $agent)->update(['shareprofit' => Db::raw('shareprofit+' . $shareprofit)]);
+
+                $curPrice = $cur['cost'];
+            }
         }
-        array_multisort($tier, SORT_ASC, $sort);
-
-        $curPrice = $meal['meal_price'];
-        foreach ($tier as $key => $value) {
-            $cur = array_pop($tier);
-
-            $shareprofit = $curPrice - $cur['cost'];
-            if ($shareprofit < 0) $shareprofit = 0;
-            $agent = $cur['agent_id'];
-
-            Agent::where('id', $agent)->update(['shareprofit' => Db::raw('shareprofit+' . $shareprofit)]);
-
-            $curPrice = $cur['cost'];
-        }
-
-        // 卡变成已激活
-        Card::where('id', $orderInfo['card_id'])->update(['card_status' => 1, 'first_active_time' => date('Y-m-d H:i:s')]);
-        // 开启允许实名权限
-        (new Api)->realname($card['business_code'], 1);
     }
 }
